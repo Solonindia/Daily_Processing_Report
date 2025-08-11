@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+  body {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    margin: 30px;
+    color: #333;
+  }
+
+  .header {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: none;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #000;
+    margin-bottom: 10px;
+  }
+
+  .project-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  /* ✅ Unified section-title styles */
+  .section-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+  }
+
+  .section-yellow {
+    color: #d39e00;
+    border-bottom: 2px solid #ffc107;
+  }
+
+  .section-green {
+    color: #218838;
+    border-bottom: 2px solid #28a745;
+  }
+
+  .section-red {
+    color: #c82333;
+    border-bottom: 2px solid #dc3545;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  th, td {
+    border: 1px solid #999;
+    padding: 6px;
+    text-align: center;
+    font-size: 11px;
+  }
+
+  th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+
+  .no-data {
+    font-style: italic;
+    color: #777;
+  }
+</style>
+
+</head>
+<body>
+
+  <!-- 🔷 Header -->
+  <div class="header">{{ project.project_name }} ({{ project.get_type_of_project_display }}), {{ project.location }}</div>
+
+
+    <div style="width: 100%; margin-bottom: 20px; font-size: 13px;">
+    <div style="display: inline-block; width: 48%; text-align: left;">
+        <strong>User:</strong> {{ project.user }}
+    </div>
+    <div style="display: inline-block; width: 30%; text-align: right;">
+        <strong>Overall Project Completion:</strong> {{ overall_completion_percent }}%
+    </div>
+    </div>
+
+  <!-- 📆 Today Activities -->
+  <!-- <div class="section-title">📆 Today Activities</div> -->
+    <div class="section-title section-yellow">📆 Today Activities</div>
+  {% if activities_today %}
+  <table>
+    
+    <thead>
+      <tr>
+        <th>SL.No</th><th>Description</th><th>UOM</th><th>Scope</th><th>Target Start</th><th>Target End</th>
+        <th>Expected Today</th><th>Today Progress</th><th>Total Completed</th><th>Balance</th>
+        <th>Actual Start</th><th>Actual End</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for act in activities_today %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ act.description }}</td>
+        <td>{{ act.uom }}</td>
+        <td>{{ act.scope }}</td>
+        <td>{{ act.targeted_start_date }}</td>
+        <td>{{ act.targeted_end_date }}</td>
+        <td>{{ act.expected_today }}</td>
+        <td>{{ act.today_progress }}</td>
+        <td>{{ act.total_progress }}</td>
+        <td>{{ act.balance }}</td>
+        <td>{{ act.scope_assigned_date }}</td>
+        <td>{{ act.scope_completed_date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="no-data">No today activities.</p>
+  {% endif %}
+
+  <!-- ✅ Ontime Activities -->
+  <!-- <div class="section-title">✅ Ontime Activities</div> -->
+  <div class="section-title section-green">✅ Ontime Activities</div>
+  {% if ontime_activities %}
+  <table>
+    <thead>
+      <tr>
+        <th>SL.No</th><th>Description</th><th>UOM</th><th>Scope</th><th>Target Start</th><th>Target End</th>
+        <th>Total Completed</th><th>Balance</th><th>Actual Start</th><th>Actual End</th><th>Percentage</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for act in ontime_activities %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ act.description }}</td>
+        <td>{{ act.uom }}</td>
+        <td>{{ act.scope }}</td>
+        <td>{{ act.targeted_start_date }}</td>
+        <td>{{ act.targeted_end_date }}</td>
+        <td>{{ act.total_progress }}</td>
+        <td>{{ act.balance }}</td>
+        <td>{{ act.scope_assigned_date }}</td>
+        <td>{{ act.scope_completed_date }}</td>
+        <td>{{ act.percentage }}%</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="no-data">No ontime activities.</p>
+  {% endif %}
+
+  <!-- ⏰ Delay Activities -->
+  <!-- <div class="section-title">⏰ Delay Activities</div> -->
+   <div class="section-title section-red">⏰ Delay Activities</div>
+  {% if delay_activities %}
+  <table>
+    <thead>
+      <tr>
+        <th>SL.No</th><th>Description</th><th>UOM</th><th>Scope</th><th>Target Start</th><th>Target End</th>
+        <th>Total Completed</th><th>Balance</th><th>Actual Start</th><th>Actual End</th><th>Days Delayed</th><th>Percentage</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for act in delay_activities %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ act.description }}</td>
+        <td>{{ act.uom }}</td>
+        <td>{{ act.scope }}</td>
+        <td>{{ act.targeted_start_date }}</td>
+        <td>{{ act.targeted_end_date }}</td>
+        <td>{{ act.total_progress }}</td>
+        <td>{{ act.balance }}</td>
+        <td>{{ act.scope_assigned_date }}</td>
+        <td>{{ act.scope_completed_date }}</td>
+        <td>{{ act.delay_days }}</td>
+        <td>{{ act.percentage }}%</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="no-data">No delay activities.</p>
+  {% endif %}
+
+</body>
+</html>
+

@@ -1,0 +1,340 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Planning Working Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      padding: 15px 30px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .navbar img {
+      height: 40px;
+    }
+    .navbar h2 {
+      margin: 0;
+      font-size: 22px;
+      color: #003366;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .nav-links a {
+      text-decoration: none;
+      margin-left: 20px;
+      color: #003366;
+      font-weight: 500;
+    }
+    .nav-links a:hover {
+      color: #0d6efd;
+    }
+    .section-title {
+      font-weight: 600;
+    }
+    .btn-toggle {
+      font-size: 0.875rem;
+      padding: 2px 8px;
+    }
+    /* .table-responsive {
+      overflow-x: auto;
+    } */
+
+    .container {
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  .card {
+    padding: 5px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  table {
+    width: 100%;
+    table-layout: auto;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+
+  th, td {
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  td.text-start {
+    text-align: left !important;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px 10px;
+  }
+
+  @media (max-width: 768px) {
+    table {
+      font-size: 12px;
+    }
+  }
+
+    .badge-status {
+      font-size: 0.75rem;
+      padding: 0.4em 0.6em;
+    }
+    .ontime {
+      background-color: #d1e7dd;
+      color: #0f5132;
+    }
+    .delay {
+      background-color: #f8d7da;
+      color: #842029;
+    }
+    .missing {
+      background-color: #fff3cd;
+      color: #664d03;
+    }
+  </style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="navbar-left">
+    <img src="{% static 'Solon-Logo.png' %}" alt="Logo">
+  </div>
+  <h2>📊 Management Working Dashboard</h2>
+  
+
+  <div class="nav-links" style="display: flex; align-items: center; gap: 30px;">
+      <a href="{% url 'admin' %}" style="color: #003366; font-weight: 500; text-decoration: none;">
+        <i class="fas fa-chart-line"></i> Admin Dashboard
+      </a>
+      
+      {% if user.is_authenticated %}
+        <form action="{% url 'logout' %}" method="POST" class="logout-form" style="margin: 0; padding: 0;">
+          {% csrf_token %}
+          <button type="submit" style="background: none; border: none; padding: 0; color: #003366; font-weight: 500; font-family: inherit; cursor: pointer;font-size: 16px;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  
+</div>
+
+<div class="container py-4">
+  {% for item in dashboard_data %}
+    <div class="card mb-4 shadow-sm">
+
+      <!-- Header -->
+      <div class="card-header bg-light d-flex justify-content-between align-items-center"
+           data-bs-toggle="collapse"
+           data-bs-target="#project-{{ forloop.counter }}">
+        <div>
+          <strong>{{ item.project_name }} ({{ item.type|title }}), {{ item.location }}</strong>
+          <div class="text-muted small">👷 User: {{ item.user }}</div>
+        </div>
+        <div class="text-end">
+
+          <span class="text-muted small"><strong>📈 Total Work Completed:</strong> {{ item.overall_completion_percent }}%</span>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="p-3 border-top d-flex flex-wrap gap-4 bg-light">
+        <span><strong>📅 Today:</strong> <span class="badge bg-info text-dark">{{ item.count_today }}</span></span>
+        <span><strong>✅ Ontime:</strong> <span class="badge bg-success">{{ item.count_ontime }}</span></span>
+        <span><strong>⏰ Delay:</strong> <span class="badge bg-danger">{{ item.count_delay }}</span></span>
+        <span><strong>🕒 Delay Days:</strong> <span class="badge bg-dark">{{ item.project_delay_days }}</span></span>
+        {% if item.project_id %}
+        <a href="{% url 'export_project_pdf' item.project_id %}" target="_blank" class="btn btn-sm btn-outline-dark ms-2">
+          📄 Export PDF
+        </a>
+        {% endif %}
+      
+      </div>
+
+      <!-- Body -->
+      <div id="project-{{ forloop.counter }}" class="collapse">
+        <div class="p-3">
+
+          <!-- Toggles -->
+          <div class="mb-3 d-flex flex-wrap gap-2">
+            <button class="btn btn-outline-primary btn-toggle" data-bs-toggle="collapse" data-bs-target="#today-{{ forloop.counter }}">📆 Today</button>
+            <button class="btn btn-outline-success btn-toggle" data-bs-toggle="collapse" data-bs-target="#ontime-{{ forloop.counter }}">✅ Ontime</button>
+            <button class="btn btn-outline-danger btn-toggle" data-bs-toggle="collapse" data-bs-target="#delay-{{ forloop.counter }}">⏰ Delay</button>
+          </div>
+
+          <!-- TODAY PROGRESS -->
+          <div id="today-{{ forloop.counter }}" class="collapse">
+            <div class="section-title text-primary mb-2">📆 Today Progress</div>
+            {% if item.activities_today %}
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped table-sm">
+                  <thead class="table-light text-center">
+                    <tr>
+                      <th>#</th>
+                      <th style="min-width: 200px;">Description</th>
+                      <th>UOM</th>
+                      <th>Scope</th>
+                      <th>Target Start</th>
+                      <th>Target End</th>
+                      <th>Expected Today</th>
+                      <th>Today Progress</th>
+                      <th>Total Completed</th>
+                      <th>Balance</th>
+                      <th>Actual Start</th>
+                      <th>Actual End</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for act in item.activities_today %}
+                    <tr class="text-center">
+                      <td>{{ forloop.counter }}</td>
+                      <td class="text-start">{{ act.description }}</td>
+                      <td>{{ act.uom }}</td>
+                      <td>{{ act.scope }}</td>
+                      <td>{{ act.targeted_start_date|default:"-" }}</td>
+                      <td>{{ act.targeted_end_date|default:"-" }}</td>
+                      <td>{{ act.expected_today }}</td>
+                      <td>{{ act.today_progress }}</td>
+                      <td>{{ act.total_progress }}</td>
+                      <td>{{ act.balance }}</td>
+                      <td>{{ act.scope_assigned_date|default:"-" }}</td>
+                      <td>{{ act.scope_completed_date|default:"-" }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-muted">No progress today.</div>
+            {% endif %}
+          </div>
+
+          <!-- ONTIME -->
+          <div id="ontime-{{ forloop.counter }}" class="collapse">
+            <div class="section-title text-success mt-4 mb-2">✅ Ontime Activities</div>
+            {% if item.ontime_activities %}
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped table-sm">
+                  <thead class="table-light text-center">
+                    <tr>
+                      <th>#</th>
+                      <th style="min-width: 200px;">Description</th>
+                      <th>UOM</th>
+                      <th>Scope</th>
+                      <th>Target Start</th>
+                      <th>Target End</th>
+                      <th>Total Completed</th>
+                      <th>Balance</th>
+                      <th>Actual Start</th>
+                      <th>Actual End</th>
+                      <th>Percentage</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for act in item.ontime_activities %}
+                    <tr class="text-center">
+                      <td>{{ forloop.counter }}</td>
+                      <td class="text-start">{{ act.description }}</td>
+                      <td>{{ act.uom }}</td>
+                      <td>{{ act.scope }}</td>
+                      <td>{{ act.targeted_start_date|default:"-" }}</td>
+                      <td>{{ act.targeted_end_date|default:"-" }}</td>
+                      <td>{{ act.total_progress }}</td>
+                      <td>{{ act.balance }}</td>
+                      <td>{{ act.scope_assigned_date|default:"-" }}</td>
+                      <td>{{ act.scope_completed_date|default:"-" }}</td>
+                      <td>{{ act.percentage }}%</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-muted">No ontime activities.</div>
+            {% endif %}
+          </div>
+
+          <!-- DELAY -->
+          <div id="delay-{{ forloop.counter }}" class="collapse">
+            <div class="section-title text-danger mt-4 mb-2">⏰ Delay Activities</div>
+            {% if item.delay_activities %}
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped table-sm">
+                  <thead class="table-light text-center">
+                    <tr>
+                      <th>#</th>
+                      <th style="min-width: 200px;">Description</th>
+                      <th>UOM</th>
+                      <th>Scope</th>
+                      <th>Target Start</th>
+                      <th>Target End</th>
+                      <th>Total Completed</th>
+                      <th>Balance</th>
+                      <th>Actual Start</th>
+                      <th>Actual End</th>
+                      <th>Days Delayed</th>
+                      <th>Percentage</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for act in item.delay_activities %}
+                    <tr class="text-center">
+                      <td>{{ forloop.counter }}</td>
+                      <td class="text-start">{{ act.description }}</td>
+                      <td>{{ act.uom }}</td>
+                      <td>{{ act.scope }}</td>
+                      <td>{{ act.targeted_start_date|default:"-" }}</td>
+                      <td>{{ act.targeted_end_date|default:"-" }}</td>
+                      <td>{{ act.total_progress }}</td>
+                      <td>{{ act.balance }}</td>
+                      <td>{{ act.scope_assigned_date|default:"-" }}</td>
+                      <td>{{ act.scope_completed_date|default:"-" }}</td>
+                      <td>{{ act.delay_days }}</td>
+                      <td>{{ act.percentage }}%</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-muted">No delay activities.</div>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  {% empty %}
+    <div class="alert alert-warning">No projects found.</div>
+  {% endfor %}
+</div>
+
+</body>
+</html>
+

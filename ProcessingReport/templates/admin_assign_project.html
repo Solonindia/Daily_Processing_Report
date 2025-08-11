@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - Assign Daily Report Access</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #f4f6f9;
+    }
+
+    .sidebar {
+      width: 230px;
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 20px 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar .top {
+      text-align: center;
+    }
+
+    .sidebar .top img {
+      width: 100px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .nav-links {
+      margin-top: 20px;
+    }
+
+    .nav-link {
+      padding: 10px 15px;
+      border-radius: 5px;
+      text-decoration: none;
+      color: #ecf0f1;
+      margin: 5px 0;
+      display: block;
+    }
+
+    .nav-link:hover {
+      background: #1abc9c;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 40px;
+      background: #f4f6f9;
+      overflow-y: auto;
+    }
+
+    .form-container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #2b3e5a;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 600;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .alert {
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .alert.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .alert.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .logout {
+      margin-top: 30px;
+      border-top: 1px solid #7f8c8d;
+      padding-top: 20px;
+    }
+
+    .logout a {
+      color: #ecf0f1;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .logout a:hover {
+      text-decoration: underline;
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="top">
+    <h2>Admin Panel</h2>
+    <div class="nav-links">
+      <a class="nav-link" href="{% url 'admin_project_sections' %}">Planning Dashboard</a>
+      <a class="nav-link" href="{% url 'admin' %}">Admin Dashboard</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="main-content">
+  <div class="form-container">
+    <h2>Assign Daily Report Access</h2>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}error{% else %}success{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      <label for="project_name">Project Name:</label>
+      <input type="text" name="project_name" id="project_name" required>
+
+      <label for="user_name">Username:</label>
+      <input type="text" name="user_name" id="user_name" required>
+
+      <label for="location">Location:</label>
+      <input type="text" name="location" id="location" required>
+
+      <label for="type_of_project">Type of Project:</label>
+      <select name="type_of_project" id="type_of_project" required>
+        <option value="">-- Select Type --</option>
+        <option value="ground mount">Ground Mount</option>
+        <option value="roof top">Roof Top</option>
+        <option value="bess">BESS</option>
+      </select>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Solar Operations Hub</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #00344d;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .navbar {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      background-color: #ffffff;
+      color: #005a87;
+      border: 1px solid #cce7f0;
+      transition: all 0.3s ease;
+    }
+
+    .navbar a:hover {
+      background-color: #d0f0ff;
+      border-color: #00a3e0;
+    }
+
+    .hero-text {
+      max-width: 700px;
+      padding: 0 20px;
+    }
+
+    .hero-text h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .hero-text p {
+      font-size: 20px;
+      color: #004766;
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .messages {
+      position: absolute;
+      top: 80px;
+      color: #d8000c;
+      font-weight: bold;
+      list-style: none;
+    }
+  </style>
+</head>
+<body>
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <div class="navbar">
+    <a href="{% url 'login1' %}">Admin Portal</a>
+    <a href="{% url 'login' %}">User Login</a>
+  </div>
+
+  <div class="hero-text">
+    <h1>Empowering Smarter Solar Management</h1>
+    <p>Monitor, analyze, and optimize your solar power systems in one place — efficient, intuitive, and built for the future.</p>
+  </div>
+</body>
+</html>
