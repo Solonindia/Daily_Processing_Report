@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +31,11 @@ SECRET_KEY = 'django-insecure-!peswj&m4uuddohlb-g*r6mg=e2ptpwvr6ojxk2s%nklp5y3t%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'solon-dpr-dagcd0gwc8cpbwf0.canadacentral-01.azurewebsites.net',
+    '127.0.0.1',
+    'localhost',
+]
 
 
 # Application definition
@@ -76,14 +85,26 @@ WSGI_APPLICATION = 'ProcessingReport.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'processingReport',
+#         'USER':'root',
+#         'PASSWORD':'pythonpc1',
+#         'HOST':'localhost',
+#         'PORT':'3306'
+#     }
+# }
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'processingReport',
-        'USER':'root',
-        'PASSWORD':'pythonpc1',
-        'HOST':'localhost',
-        'PORT':'3306'
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': '3306',
     }
 }
 
@@ -135,3 +156,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/home/'
 LOGOUT_REDIRECT_URL = '/home/'
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://solon-dpr-dagcd0gwc8cpbwf0.canadacentral-01.azurewebsites.net/',
+    'http://solon-dpr-dagcd0gwc8cpbwf0.canadacentral-01.azurewebsites.net/',
+    'http://localhost',
+
+]
